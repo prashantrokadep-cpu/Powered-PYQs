@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>Powered PYQs | Board Exam Prep & Solutions</title>
+    <meta name="title" content="Powered PYQs | Board Exam Prep & Solutions">
+    <meta name="description" content="Master your Class 10 Board Exams with Powered PYQs. Access structured previous year questions, detailed solutions, and recommended resources for Math, Science, and Social Science.">
+    <meta name="keywords" content="Class 10, PYQ, Previous Year Questions, CBSE, Board Exams, Mathematics, Science, Social Science, Study Material, Solutions">
+    <meta name="author" content="Pratyush Rokade">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://poweredpyqs.com/">
+    <meta property="og:title" content="Powered PYQs | Board Exam Prep">
+    <meta property="og:description" content="Master your Class 10 Board Exams with Powered PYQs. Access structured previous year questions and solutions.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://poweredpyqs.com/">
+    <meta property="twitter:title" content="Powered PYQs | Board Exam Prep">
+    <meta property="twitter:description" content="Master your Class 10 Board Exams with Powered PYQs. Access structured previous year questions and solutions.">
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Add your AdSense script here after approval:
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script>
+    -->
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo" style="flex-direction: column; align-items: flex-start; gap: 0.2rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="ri-book-3-fill"></i>
+                    <h2>Powered PYQs</h2>
+                </div>
+                <h3 style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400; padding-left: 2.2rem; margin-top: -0.2rem;">by Pratyush Rokade</h3>
+            </div>
+            
+            <nav class="nav-menu">
+                <div class="nav-section">
+                    <h3>Subjects</h3>
+                    <ul id="subject-list">
+                        <li class="active" data-subject="Mathematics"><i class="ri-functions"></i> Mathematics</li>
+                        <li data-subject="Science"><i class="ri-test-tube-fill"></i> Science</li>
+                        <li data-subject="Social Science"><i class="ri-earth-fill"></i> Social Science</li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h3>Chapters</h3>
+                    <ul id="chapter-list">
+                        <!-- Chapters will be dynamically loaded here -->
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="saved-tab" id="saved-tab" style="margin-top: auto;">
+                <i class="ri-bookmark-3-fill"></i>
+                <span>Saved Questions</span>
+                <span class="saved-count" id="saved-count">0</span>
+            </div>
+
+            <div class="saved-tab" id="affiliates-tab" style="margin-top: 0.5rem; background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2);">
+                <i class="ri-shopping-cart-2-line"></i>
+                <span>Recommended Resources</span>
+            </div>
+            
+            <div class="saved-tab" id="contact-tab" style="margin-top: 0.5rem; background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2);">
+                <i class="ri-mail-send-line"></i>
+                <span>Contact Me</span>
+            </div>
+            
+            <a class="admin-tab" id="admin-tab" href="admin.html" style="margin-top: 1rem;">
+                <i class="ri-user-settings-fill"></i>
+                <span>Admin Area</span>
+            </a>
+
+            <div class="site-footer-links">
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy-policy.html">Privacy</a>
+                <a href="terms.html">Terms</a>
+            </div>
+            
+            <div class="admin-tab" id="upload-tab" style="display: none; margin-top: 0.5rem;">
+                <i class="ri-upload-cloud-2-line"></i>
+                <span>Upload Question</span>
+            </div>
+            
+            <div class="admin-tab" id="upload-affiliate-tab" style="display: none; margin-top: 0.5rem;">
+                <i class="ri-links-line"></i>
+                <span>Upload Affiliate</span>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="topbar">
+                <div class="search-container">
+                    <i class="ri-search-line"></i>
+                    <input type="text" id="search-input" placeholder="Search questions, topics...">
+                </div>
+                
+                <div class="filter-container">
+                    <i class="ri-filter-3-line"></i>
+                    <select id="year-filter">
+                        <option value="All">All Years</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                        <option value="2019">2019</option>
+                    </select>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-header">
+                <h1 id="current-view-title">Mathematics - Real Numbers</h1>
+                <p id="question-count-text">Showing 0 questions</p>
+            </div>
+
+            <div class="ad-shell">
+                <div class="ad-slot ad-slot-top" aria-label="Advertisement placeholder"></div>
+            </div>
+
+            <div class="questions-container" id="questions-container">
+                <!-- Question frames will be rendered here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Contact Page Template (Hidden, edit your info here!) -->
+    <div id="contact-template" style="display: none;">
+        <div class="contact-wrapper">
+            <div class="contact-card">
+                <h2><i class="ri-user-smile-line"></i> Get in Touch</h2>
+                <p class="contact-desc">Have a question, feedback, or found a mistake in a PYQ? Feel free to reach out to me!</p>
+                
+                <div class="contact-methods">
+                    <!-- Edit Email Here -->
+                    <a href="mailto:your.email@example.com" class="contact-method">
+                        <div class="contact-icon"><i class="ri-mail-line"></i></div>
+                        <div class="contact-details">
+                            <h3>Email Me</h3>
+                            <p>your.email@example.com</p>
+                        </div>
+                    </a>
+                    
+                    <!-- Edit Instagram Here -->
+                    <a href="https://instagram.com/yourusername" target="_blank" class="contact-method">
+                        <div class="contact-icon" style="color: #e1306c;"><i class="ri-instagram-line"></i></div>
+                        <div class="contact-details">
+                            <h3>Instagram</h3>
+                            <p>@yourusername</p>
+                        </div>
+                    </a>
+                    
+                    <!-- Edit Telegram/Discord Here -->
+                    <a href="https://t.me/yourusername" target="_blank" class="contact-method">
+                        <div class="contact-icon" style="color: #0088cc;"><i class="ri-telegram-line"></i></div>
+                        <div class="contact-details">
+                            <h3>Telegram</h3>
+                            <p>@yourusername</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal-overlay" id="admin-login-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Admin Login</h2>
+                <a class="btn-close" id="close-login-modal" href="#"><i class="ri-close-line"></i></a>
+            </div>
+            <div class="modal-body">
+                <p>Please enter your credentials to verify your identity.</p>
+                <div class="form-group">
+                    <input type="text" id="admin-username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="admin-password" placeholder="Enter password" required>
+                </div>
+                <button class="btn-primary" id="btn-admin-login">Login</button>
+                <p id="login-error" class="error-text"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard Modal (Upload Form) -->
+    <div class="modal-overlay" id="admin-dashboard-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2>Upload New Question</h2>
+                <button class="btn-close" id="close-dashboard-modal"><i class="ri-close-line"></i></button>
+            </div>
+            <div class="modal-body">
+                <p>Upload a new Previous Year Question to the local database.</p>
+                <form id="upload-question-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <select id="upload-subject" required>
+                                <option value="Mathematics">Mathematics</option>
+                                <option value="Science">Science</option>
+                                <option value="Social Science">Social Science</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Chapter</label>
+                            <input type="text" id="upload-chapter" placeholder="e.g. Real Numbers" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Year</label>
+                            <input type="number" id="upload-year" placeholder="e.g. 2024" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Topic Tag</label>
+                            <input type="text" id="upload-topic" placeholder="e.g. Algebra" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Question Text</label>
+                        <textarea id="upload-question" rows="3" placeholder="Enter the full question here..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Question Image (Optional)</label>
+                        <input type="file" id="upload-image" accept="image/*">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Solution</label>
+                        <textarea id="upload-solution" rows="4" placeholder="Enter the step-by-step solution..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Upload Question</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Affiliate Modal -->
+    <div class="modal-overlay" id="upload-affiliate-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2>Upload Affiliate Link</h2>
+                <button class="btn-close" id="close-affiliate-modal"><i class="ri-close-line"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="upload-affiliate-form">
+                    <div class="form-group">
+                        <label>Title / Product Name</label>
+                        <input type="text" id="affiliate-title" placeholder="e.g. Oswaal Class 10 Math Book" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="affiliate-description" rows="3" placeholder="Brief description of why this resource is helpful..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Affiliate URL</label>
+                        <input type="url" id="affiliate-url" placeholder="https://amazon.in/..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Product Image (Optional)</label>
+                        <input type="file" id="affiliate-image" accept="image/*">
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="margin-top: 1rem; width: 100%;">Upload Affiliate Link</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
