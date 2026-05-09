@@ -497,5 +497,21 @@ def generate_keys():
         if conn:
             conn.close()
 
+@app.route('/api/debug')
+def debug_server():
+    return jsonify({
+        "status": "online",
+        "environment": "vercel" if os.getenv("VERCEL") else "local",
+        "database": "postgres" if USING_POSTGRES else "sqlite"
+    }), 200
+
+@app.route('/api/<path:path>')
+def api_catch_all(path):
+    return jsonify({
+        "error": "API route not found",
+        "path_received": f"/api/{path}",
+        "available_routes": ["/api/questions", "/api/login", "/api/register", "/api/access/status"]
+    }), 404
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

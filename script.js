@@ -1008,20 +1008,6 @@ async function handleSignup(username, password) {
 }
 
 function updateUserUI() {
-    if (state.currentUser) {
-        elements.userTabText.textContent = state.currentUser.username;
-        elements.userTab.style.borderColor = 'var(--success)';
-        elements.userTab.style.color = 'var(--success)';
-        elements.userTab.style.background = 'rgba(16, 185, 129, 0.1)';
-    } else {
-        elements.userTabText.textContent = 'User Login';
-        elements.userTab.style.borderColor = 'rgba(139, 92, 246, 0.2)';
-        elements.userTab.style.color = '#a78bfa';
-        elements.userTab.style.background = 'rgba(139, 92, 246, 0.1)';
-    }
-}
-
-function updateUserUI() {
     if (!elements.userTabText) return;
     if (state.currentUser) {
         elements.userTabText.textContent = state.currentUser.username;
