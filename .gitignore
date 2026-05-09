@@ -1,0 +1,21 @@
+# Python Cache and Compiled Files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Python Virtual Environments
+venv/
+env/
+.venv/
+.env
+
+# Local Database
+# We ignore the local database so that when you push new code to GitHub, 
+# you don't accidentally overwrite your live production database.
+backend/pyq_database.db
+pyq_database.db
+
+# OS specific files
+.DS_Store
+Thumbs.db

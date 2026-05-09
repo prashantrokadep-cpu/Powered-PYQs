@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>Powered PYQs | Board Exam Prep & Solutions</title>
+    <meta name="title" content="Powered PYQs | Board Exam Prep & Solutions">
+    <meta name="description" content="Master your Class 10 Board Exams with Powered PYQs. Access structured previous year questions, detailed solutions, and recommended resources for Math, Science, and Social Science.">
+    <meta name="keywords" content="Class 10, PYQ, Previous Year Questions, CBSE, Board Exams, Mathematics, Science, Social Science, Study Material, Solutions">
+    <meta name="author" content="Pratyush Rokade">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://poweredpyqs.com/">
+    <meta property="og:title" content="Powered PYQs | Board Exam Prep">
+    <meta property="og:description" content="Master your Class 10 Board Exams with Powered PYQs. Access structured previous year questions and solutions.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://poweredpyqs.com/">
+    <meta property="twitter:title" content="Powered PYQs | Board Exam Prep">
+    <meta property="twitter:description" content="Master your Class 10 Board Exams with Powered PYQs. Access structured previous year questions and solutions.">
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google AdSense - Replace with your real ID when ready -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="toast-container" id="toast-container"></div>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <button class="sidebar-close" id="sidebar-close" aria-label="Close Sidebar"><i class="ri-close-line"></i></button>
+            <div class="logo">
+                <img src="logo.png" alt="Powered PYQs Logo" class="site-logo-img">
+                <div class="logo-text">
+                    <div class="logo-main">Powered PYQs</div>
+                    <div class="logo-sub">by Pratyush Rokade</div>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <div class="nav-section">
+                    <h3>Subjects</h3>
+                    <ul id="subject-list">
+                        <li class="active" data-subject="Mathematics"><i class="ri-functions"></i> Mathematics</li>
+                        <li data-subject="Science"><i class="ri-test-tube-fill"></i> Science</li>
+                        <li data-subject="Social Science"><i class="ri-earth-fill"></i> Social Science</li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h3>Chapters</h3>
+                    <ul id="chapter-list">
+                        <!-- Chapters will be dynamically loaded here -->
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="saved-tab" id="saved-tab" style="margin-top: auto;">
+                <i class="ri-bookmark-3-fill"></i>
+                <span>Saved Questions</span>
+                <span class="saved-count" id="saved-count">0</span>
+            </div>
+
+            <div class="saved-tab" id="user-tab" style="margin-top: 0.5rem; background: rgba(139, 92, 246, 0.1); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.2);">
+                <i class="ri-user-smile-fill"></i>
+                <span id="user-tab-text">User Login</span>
+            </div>
+
+            <div class="saved-tab" id="access-status-tab" style="margin-top: 0.5rem; display: none; background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); font-size: 0.75rem;">
+                <i class="ri-key-2-line"></i>
+                <span id="access-expiry-text">No Active Key</span>
+            </div>
+
+            <div class="saved-tab" id="affiliates-tab" style="margin-top: 0.5rem; background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2);">
+                <i class="ri-shopping-cart-2-line"></i>
+                <span>Recommended Resources</span>
+            </div>
+            
+            <div class="saved-tab" id="contact-tab" style="margin-top: 0.5rem; background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2);">
+                <i class="ri-mail-send-line"></i>
+                <span>Contact Me</span>
+            </div>
+            
+            <a class="admin-tab" id="admin-tab" href="admin.html" style="margin-top: 1rem;">
+                <i class="ri-user-settings-fill"></i>
+                <span>Admin Area</span>
+            </a>
+
+            <div class="site-footer-links">
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy-policy.html">Privacy</a>
+                <a href="terms.html">Terms</a>
+            </div>
+            
+            <div class="admin-tab" id="upload-tab" style="display: none; margin-top: 0.5rem;">
+                <i class="ri-upload-cloud-2-line"></i>
+                <span>Upload Question</span>
+            </div>
+            
+            <div class="admin-tab" id="upload-affiliate-tab" style="display: none; margin-top: 0.5rem;">
+                <i class="ri-links-line"></i>
+                <span>Upload Affiliate</span>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="topbar">
+                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Sidebar">
+                    <i class="ri-menu-2-line"></i>
+                </button>
+                <div class="search-container">
+                    <i class="ri-search-line"></i>
+                    <input type="text" id="search-input" placeholder="Search questions, topics...">
+                </div>
+                
+                <div class="filter-container">
+                    <i class="ri-filter-3-line"></i>
+                    <select id="year-filter">
+                        <option value="All">All Years</option>
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                    </select>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-header">
+                <h1 id="current-view-title">Mathematics - Real Numbers</h1>
+                <p id="question-count-text">Showing 0 questions</p>
+            </div>
+
+            <div class="ad-shell">
+                <!-- Top Banner Ad -->
+                <div class="ad-slot ad-slot-top">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-0000000000000000"
+                         data-ad-slot="0000000000"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+            </div>
+
+            <!-- Access Denied Overlay -->
+            <div id="access-denied-overlay" class="access-overlay" style="display: none;">
+                <div class="access-card">
+                    <div class="access-lock-icon"><i class="ri-lock-2-line"></i></div>
+                    <h2>Content Locked</h2>
+                    <p>To view these questions, please enter your 24-hour access key.</p>
+                    <button class="btn-primary" id="btn-show-key-modal">Enter Access Key</button>
+                    <p class="access-help">Don't have a key? <a href="contact.html">Contact admin</a> to get one.</p>
+                </div>
+            </div>
+
+            <div class="questions-container" id="questions-container">
+                <!-- Question frames will be rendered here -->
+            </div>
+
+            <div class="ad-shell ad-shell-bottom">
+                <!-- Bottom Banner Ad -->
+                <div class="ad-slot ad-slot-bottom">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-0000000000000000"
+                         data-ad-slot="0000000000"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+            </div>
+
+            <div class="footer-toggle-wrapper">
+                <button id="btn-toggle-footer" class="btn-secondary btn-sm">
+                    <i class="ri-information-line"></i> <span>Show Site Info</span>
+                </button>
+            </div>
+
+            <div id="footer-expand-container" class="footer-collapsed">
+                <footer class="site-main-footer">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <div class="footer-brand">
+                            <img src="logo.png" alt="Logo" class="site-logo-img">
+                            <div class="brand-text">
+                                <div class="brand-name">Powered PYQs</div>
+                                <div class="brand-tag">Excellence in Exam Prep</div>
+                            </div>
+                        </div>
+                        <p class="footer-about">Master your board exams with our curated previous year questions and expert solutions.</p>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Resources</h4>
+                        <ul class="footer-links">
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                            <li><a href="terms.html">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Connect</h4>
+                        <div class="social-links">
+                            <a href="#" class="social-btn"><i class="ri-instagram-line"></i></a>
+                            <a href="#" class="social-btn"><i class="ri-telegram-line"></i></a>
+                            <a href="#" class="social-btn"><i class="ri-mail-line"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>© 2026 Powered PYQs. Built with <i class="ri-heart-fill" style="color: #ef4444;"></i> by Pratyush Rokade</p>
+                </div>
+            </footer>
+            </div>
+        </main>
+    </div>
+
+    <!-- Contact Page Template (Hidden, edit your info here!) -->
+    <div id="contact-template" style="display: none;">
+        <div class="contact-wrapper">
+            <div class="contact-card">
+                <h2><i class="ri-user-smile-line"></i> Get in Touch</h2>
+                <p class="contact-desc">Have a question, feedback, or found a mistake in a PYQ? Feel free to reach out to me!</p>
+                
+                <div class="contact-methods">
+                    <!-- Edit Email Here -->
+                    <a href="mailto:your.email@example.com" class="contact-method">
+                        <div class="contact-icon"><i class="ri-mail-line"></i></div>
+                        <div class="contact-details">
+                            <h3>Email Me</h3>
+                            <p>your.email@example.com</p>
+                        </div>
+                    </a>
+                    
+                    <!-- Edit Instagram Here -->
+                    <a href="https://instagram.com/yourusername" target="_blank" class="contact-method">
+                        <div class="contact-icon" style="color: #e1306c;"><i class="ri-instagram-line"></i></div>
+                        <div class="contact-details">
+                            <h3>Instagram</h3>
+                            <p>@yourusername</p>
+                        </div>
+                    </a>
+                    
+                    <!-- Edit Telegram/Discord Here -->
+                    <a href="https://t.me/yourusername" target="_blank" class="contact-method">
+                        <div class="contact-icon" style="color: #0088cc;"><i class="ri-telegram-line"></i></div>
+                        <div class="contact-details">
+                            <h3>Telegram</h3>
+                            <p>@yourusername</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal-overlay" id="admin-login-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Admin Login</h2>
+                <a class="btn-close" id="close-login-modal" href="#"><i class="ri-close-line"></i></a>
+            </div>
+            <div class="modal-body">
+                <p>Please enter your credentials to verify your identity.</p>
+                <div class="form-group">
+                    <input type="text" id="admin-username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="admin-password" placeholder="Enter password" required>
+                </div>
+                <button class="btn-primary" id="btn-admin-login">Login</button>
+                <p id="login-error" class="error-text"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard Modal (Upload Form) -->
+    <div class="modal-overlay" id="admin-dashboard-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2>Upload New Question</h2>
+                <button class="btn-close" id="close-dashboard-modal"><i class="ri-close-line"></i></button>
+            </div>
+            <div class="modal-body">
+                <p>Upload a new Previous Year Question to the local database.</p>
+                <form id="upload-question-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <select id="upload-subject" required>
+                                <option value="Mathematics">Mathematics</option>
+                                <option value="Science">Science</option>
+                                <option value="Social Science">Social Science</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Chapter</label>
+                            <input type="text" id="upload-chapter" placeholder="e.g. Real Numbers" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Year</label>
+                            <input type="number" id="upload-year" min="2022" max="2026" placeholder="e.g. 2024" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Topic Tag</label>
+                            <input type="text" id="upload-topic" placeholder="e.g. Algebra" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Question Text</label>
+                        <textarea id="upload-question" rows="3" placeholder="Enter the full question here..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Question Image (Optional)</label>
+                        <input type="file" id="upload-image" accept="image/*">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Solution</label>
+                        <textarea id="upload-solution" rows="4" placeholder="Enter the step-by-step solution..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Upload Question</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Affiliate Modal -->
+    <div class="modal-overlay" id="upload-affiliate-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2>Upload Affiliate Link</h2>
+                <button class="btn-close" id="close-affiliate-modal"><i class="ri-close-line"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="upload-affiliate-form">
+                    <div class="form-group">
+                        <label>Title / Product Name</label>
+                        <input type="text" id="affiliate-title" placeholder="e.g. Oswaal Class 10 Math Book" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="affiliate-description" rows="3" placeholder="Brief description of why this resource is helpful..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Affiliate URL</label>
+                        <input type="url" id="affiliate-url" placeholder="https://amazon.in/..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Product Image (Optional)</label>
+                        <input type="file" id="affiliate-image" accept="image/*">
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="margin-top: 1rem; width: 100%;">Upload Affiliate Link</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Auth Modal -->
+    <div class="modal-overlay" id="user-auth-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="auth-modal-title">User Login</h2>
+                <button class="btn-close" id="close-auth-modal"><i class="ri-close-line"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="auth-toggle">
+                    <button class="auth-toggle-btn active" id="toggle-login">Login</button>
+                    <button class="auth-toggle-btn" id="toggle-signup">Sign Up</button>
+                </div>
+                
+                <form id="user-auth-form">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="auth-username" placeholder="Enter username" required autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="auth-password" placeholder="Enter password" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="btn-primary" id="btn-auth-submit">Login</button>
+                </form>
+                <p id="auth-error" class="error-text"></p>
+                <p id="auth-success" class="success-text" style="color: var(--success); font-size: 0.85rem; margin-top: 0.5rem; display: none;"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Access Key Modal -->
+    <div class="modal-overlay" id="access-key-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Activate Access</h2>
+                <button class="btn-close" id="close-access-modal"><i class="ri-close-line"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-muted);">Enter your unique access key to unlock all questions and solutions for 24 hours.</p>
+                <form id="access-key-form">
+                    <div class="form-group">
+                        <label>Access Key</label>
+                        <input type="text" id="access-key-input" placeholder="XXXX-XXXX" required>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Unlock Now</button>
+                </form>
+                <p id="access-key-error" class="error-text" style="margin-top: 0.5rem;"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

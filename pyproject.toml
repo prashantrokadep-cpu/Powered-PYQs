@@ -1,0 +1,6 @@
+[project]
+name = "powered-pyqss"
+version = "0.1.0"
+
+[project.scripts]
+app = "api.app:app"
