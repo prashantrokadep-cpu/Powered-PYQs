@@ -137,7 +137,30 @@ def init_db():
     finally:
         conn.close()
 
-init_db()
+# Global flag to ensure DB is initialized only once
+_db_initialized = False
+
+def ensure_db_initialized():
+    global _db_initialized
+    if not _db_initialized:
+        try:
+            init_db()
+            _db_initialized = True
+        except Exception as e:
+            print(f"Database Initialization Error: {e}")
+
+@app.before_request
+def before_request():
+    ensure_db_initialized()
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # Pass through HTTP errors
+    if hasattr(e, 'code'):
+        return jsonify({"error": str(e)}), e.code
+    # Handle non-HTTP errors
+    print(f"Unhandled Backend Error: {e}")
+    return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
 
 
 @app.route('/')
