@@ -152,10 +152,12 @@ def handle_exception(e):
 
 
 @app.route('/api/questions', methods=['GET'])
+@app.route('/questions', methods=['GET'])
 def get_questions():
     return jsonify(fetch_all('SELECT * FROM questions')), 200
 
 @app.route('/api/questions', methods=['POST'])
+@app.route('/questions', methods=['POST'])
 def add_question():
     data, error = get_json_payload([
         'id', 'subject', 'chapter', 'year', 'topic', 'question', 'solution'
@@ -180,6 +182,7 @@ def add_question():
             conn.close()
 
 @app.route('/api/questions/<question_id>', methods=['DELETE'])
+@app.route('/questions/<question_id>', methods=['DELETE'])
 def delete_question(question_id):
     conn = None
     try:
@@ -196,10 +199,12 @@ def delete_question(question_id):
             conn.close()
 
 @app.route('/api/affiliates', methods=['GET'])
+@app.route('/affiliates', methods=['GET'])
 def get_affiliates():
     return jsonify(fetch_all('SELECT * FROM affiliates')), 200
 
 @app.route('/api/affiliates', methods=['POST'])
+@app.route('/affiliates', methods=['POST'])
 def add_affiliate():
     data, error = get_json_payload(['id', 'title', 'description', 'url'])
     if error:
@@ -222,6 +227,7 @@ def add_affiliate():
             conn.close()
 
 @app.route('/api/affiliates/<affiliate_id>', methods=['DELETE'])
+@app.route('/affiliates/<affiliate_id>', methods=['DELETE'])
 def delete_affiliate(affiliate_id):
     conn = None
     try:
@@ -243,6 +249,7 @@ def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 @app.route('/api/register', methods=['POST'])
+@app.route('/register', methods=['POST'])
 def register():
     data, error = get_json_payload(['username', 'password'])
     if error:
@@ -277,6 +284,7 @@ def register():
             conn.close()
 
 @app.route('/api/login', methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login():
     data, error = get_json_payload(['username', 'password'])
     if error:
@@ -323,6 +331,7 @@ def login():
 # --- Saved Questions Sync Endpoints ---
 
 @app.route('/api/user/saved', methods=['GET'])
+@app.route('/user/saved', methods=['GET'])
 def get_user_saved_questions():
     user_id = request.args.get('userId')
     if not user_id:
@@ -343,6 +352,7 @@ def get_user_saved_questions():
             conn.close()
 
 @app.route('/api/user/saved', methods=['POST'])
+@app.route('/user/saved', methods=['POST'])
 def sync_user_saved_questions():
     data, error = get_json_payload(['userId', 'savedIds'])
     if error:
@@ -373,6 +383,7 @@ def sync_user_saved_questions():
 # --- Access Key System Endpoints ---
 
 @app.route('/api/access/status', methods=['GET'])
+@app.route('/access/status', methods=['GET'])
 def get_access_status():
     user_id = request.args.get('userId')
     if not user_id:
@@ -397,6 +408,7 @@ def get_access_status():
             conn.close()
 
 @app.route('/api/access/activate', methods=['POST'])
+@app.route('/access/activate', methods=['POST'])
 def activate_key():
     data, error = get_json_payload(['userId', 'key'])
     if error:
@@ -435,6 +447,7 @@ def activate_key():
             conn.close()
 
 @app.route('/api/access/claim', methods=['GET'])
+@app.route('/access/claim', methods=['GET'])
 def claim_access():
     user_id = request.args.get('userId')
     if not user_id:
@@ -460,6 +473,7 @@ def claim_access():
 
 # Admin endpoint to generate keys (for your use)
 @app.route('/api/admin/generate-keys', methods=['POST'])
+@app.route('/admin/generate-keys', methods=['POST'])
 def generate_keys():
     # In a real app, protect this with admin password
     data = request.json
