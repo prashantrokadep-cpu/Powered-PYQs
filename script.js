@@ -967,11 +967,12 @@ async function handleLogin(username, password) {
             await fetchUserSavedQuestions();
             clearAuthForm();
         } else {
-            elements.authError.textContent = data.error || 'Login failed';
+            elements.authError.textContent = data.error || `Login failed (Status: ${response.status})`;
             elements.authError.style.display = 'block';
         }
     } catch (err) {
-        elements.authError.textContent = 'Connection error';
+        console.error("Login Error Details:", err);
+        elements.authError.textContent = `Connection error: ${err.message || 'Server unreachable'}`;
         elements.authError.style.display = 'block';
     }
 }
@@ -995,11 +996,12 @@ async function handleSignup(username, password) {
                 elements.authSuccess.style.display = 'none';
             }, 2000);
         } else {
-            elements.authError.textContent = data.error || 'Registration failed';
+            elements.authError.textContent = data.error || `Registration failed (Status: ${response.status})`;
             elements.authError.style.display = 'block';
         }
     } catch (err) {
-        elements.authError.textContent = 'Connection error';
+        console.error("Signup Error Details:", err);
+        elements.authError.textContent = `Connection error: ${err.message || 'Server unreachable'}`;
         elements.authError.style.display = 'block';
     }
 }
