@@ -2,9 +2,9 @@
 let BASE_API_URL = '';
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     BASE_API_URL = 'http://' + window.location.hostname + ':5000';
-} else if (window.location.hostname.startsWith('192.168.')) {
-    // Mobile testing on same network
-    BASE_API_URL = 'http://' + window.location.hostname + ':5000';
+} else {
+    // Production on Vercel
+    BASE_API_URL = window.location.origin;
 }
 console.log("API Configured at:", BASE_API_URL || "Production (Relative)");
 

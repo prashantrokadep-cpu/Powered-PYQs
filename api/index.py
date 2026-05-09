@@ -281,12 +281,18 @@ def claim_access():
     finally:
         if conn: conn.close()
 
-@app.route('/api/<path:path>')
-def api_catch_all(path):
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    # This will catch EVERYTHING sent to the function
     return jsonify({
-        "error": "API route not found",
-        "path_received": f"/api/{path}",
-        "available_routes": ["/api/questions", "/api/login", "/api/register", "/api/access/status"]
+        "error": "Flask Catch-all triggered",
+        "path_received": path,
+        "request_path": request.path,
+        "full_url": request.url,
+        "methods_allowed": ["GET", "POST", "DELETE"],
+        "server_status": "online",
+        "registered_routes": [str(rule) for rule in app.url_map.iter_rules()]
     }), 404
 
 if __name__ == '__main__':
