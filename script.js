@@ -2,9 +2,9 @@
 let BASE_API_URL = '';
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     BASE_API_URL = 'http://' + window.location.hostname + ':5000';
-} else {
-    // Production on Vercel
-    BASE_API_URL = window.location.origin;
+} else if (window.location.hostname.startsWith('192.168.')) {
+    // Mobile testing on same network
+    BASE_API_URL = 'http://' + window.location.hostname + ':5000';
 }
 console.log("API Configured at:", BASE_API_URL || "Production (Relative)");
 
@@ -1004,6 +1004,20 @@ async function handleSignup(username, password) {
         console.error("Signup Error Details:", err);
         elements.authError.textContent = `Connection error: ${err.message || 'Server unreachable'}`;
         elements.authError.style.display = 'block';
+    }
+}
+
+function updateUserUI() {
+    if (state.currentUser) {
+        elements.userTabText.textContent = state.currentUser.username;
+        elements.userTab.style.borderColor = 'var(--success)';
+        elements.userTab.style.color = 'var(--success)';
+        elements.userTab.style.background = 'rgba(16, 185, 129, 0.1)';
+    } else {
+        elements.userTabText.textContent = 'User Login';
+        elements.userTab.style.borderColor = 'rgba(139, 92, 246, 0.2)';
+        elements.userTab.style.color = '#a78bfa';
+        elements.userTab.style.background = 'rgba(139, 92, 246, 0.1)';
     }
 }
 

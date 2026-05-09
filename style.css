@@ -79,8 +79,7 @@ body {
     font-family: 'Outfit', sans-serif;
     background-color: var(--bg-base);
     color: var(--text-main);
-    /* Allow natural scrolling on the body if needed */
-    overflow-x: hidden;
+    overflow: hidden;
     /* Subtle background glow effect */
     background-image: 
         radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.08), transparent 25%),
