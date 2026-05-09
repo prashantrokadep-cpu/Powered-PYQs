@@ -22,20 +22,6 @@ DB_FILE = (
     if os.getenv("VERCEL")
     else os.path.join(os.path.dirname(os.path.dirname(__file__)), "pyq_database.db")
 )
-STATIC_FILES = {
-    "index.html",
-    "admin.html",
-    "about.html",
-    "contact.html",
-    "privacy-policy.html",
-    "terms.html",
-    "style.css",
-    "script.js",
-    "data.js",
-    "robots.txt",
-    "ads.txt",
-    "sitemap.xml",
-}
 
 
 def get_db_connection():
@@ -163,17 +149,6 @@ def handle_exception(e):
     return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
 
 
-@app.route('/')
-def serve_index():
-    return send_from_directory(PROJECT_ROOT, 'index.html')
-
-
-@app.route('/<path:filename>')
-def serve_static_file(filename):
-    if filename in STATIC_FILES:
-        return send_from_directory(PROJECT_ROOT, filename)
-
-    abort(404)
 
 
 @app.route('/api/questions', methods=['GET'])
