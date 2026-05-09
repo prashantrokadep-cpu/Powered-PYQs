@@ -280,12 +280,19 @@ def register():
         user_id = str(uuid.uuid4())
         password_hash = hash_password(data['password'])
         
+        # Auto-grant first 24 hours
+        access_until = (datetime.now() + timedelta(hours=24)).isoformat()
+        
         conn.execute(f'''
-            INSERT INTO users (id, username, password_hash)
-            VALUES ({placeholder}, {placeholder}, {placeholder})
-        ''', (user_id, data['username'], password_hash))
+            INSERT INTO users (id, username, password_hash, access_until)
+            VALUES ({placeholder}, {placeholder}, {placeholder}, {placeholder})
+        ''', (user_id, data['username'], password_hash, access_until))
         conn.commit()
-        return jsonify({"message": "User registered successfully!", "userId": user_id}), 201
+        return jsonify({
+            "message": "User registered successfully!", 
+            "userId": user_id,
+            "accessUntil": access_until
+        }), 201
     except sqlite3.IntegrityError:
         return jsonify({"error": "Username already exists"}), 409
     except Exception as e:
@@ -309,8 +316,19 @@ def login():
         ''', (data['username'],)).fetchone()
         
         if user and user['password_hash'] == hash_password(data['password']):
-            # Convert timestamp to ISO format for frontend
+            # Auto-renew/Grant access for 24 hours if expired
             access_until = user['access_until']
+            is_expired = True
+            if access_until:
+                expiry = datetime.fromisoformat(access_until) if isinstance(access_until, str) else access_until
+                if expiry > datetime.now():
+                    is_expired = False
+            
+            if is_expired:
+                access_until = (datetime.now() + timedelta(hours=24)).isoformat()
+                conn.execute(f'UPDATE users SET access_until = {placeholder} WHERE id = {placeholder}', (access_until, user['id']))
+                conn.commit()
+
             return jsonify({
                 "message": "Login successful!",
                 "user": {
@@ -437,6 +455,30 @@ def activate_key():
         return jsonify({"message": "Access activated successfully!", "accessUntil": expiry}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    finally:
+        if conn:
+            conn.close()
+
+@app.route('/api/access/claim', methods=['GET'])
+def claim_access():
+    user_id = request.args.get('userId')
+    if not user_id:
+        return "Missing userId", 400
+    
+    conn = None
+    try:
+        conn = get_db_connection()
+        placeholder = db_placeholder()
+        
+        expiry = (datetime.now() + timedelta(hours=24)).isoformat()
+        conn.execute(f'UPDATE users SET access_until = {placeholder} WHERE id = {placeholder}', (expiry, user_id))
+        conn.commit()
+        
+        # Redirect back to the main site with a success flag
+        from flask import redirect
+        return redirect('/?accessClaimed=true')
+    except Exception as e:
+        return f"Error: {e}", 500
     finally:
         if conn:
             conn.close()

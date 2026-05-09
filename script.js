@@ -85,7 +85,8 @@ const elements = {
     accessKeyForm: document.getElementById('access-key-form'),
     accessKeyError: document.getElementById('access-key-error'),
     accessStatusTab: document.getElementById('access-status-tab'),
-    accessExpiryText: document.getElementById('access-expiry-text')
+    accessExpiryText: document.getElementById('access-expiry-text'),
+    btnClaimFreeAccess: document.getElementById('btn-claim-free-access')
 };
 
 // Application Data (Merge static data with backend data)
@@ -1110,12 +1111,42 @@ function updateAccessUI() {
     }
 }
 
+function setupAccessClaimListener() {
+    if (!elements.btnClaimFreeAccess) return;
+
+    elements.btnClaimFreeAccess.addEventListener('click', async () => {
+        if (!state.currentUser) {
+            showToast("Please login first to claim access.", "info");
+            elements.userAuthModal.classList.add('active');
+            return;
+        }
+
+        // 1. Open the Ad Page in a new tab
+        // Replace this URL with your ShrinkMe/AdFly/Shortener link
+        const adPageUrl = `https://www.google.com/search?q=Your+Ad+Link+Here`; 
+        window.open(adPageUrl, '_blank');
+
+        // 2. Immediately grant access in the background
+        try {
+            const response = await fetch(`${BASE_API_URL}/api/access/claim?userId=${state.currentUser.id}`);
+            if (response.ok) {
+                showToast("Access Unlocked! Check the new tab for your ad.", "success");
+                // Refresh the local state to show content immediately
+                await checkAccessStatus(); 
+            }
+        } catch (err) {
+            console.error("Auto-claim error:", err);
+        }
+    });
+}
+
 // Start
 document.addEventListener('DOMContentLoaded', async () => {
     setupEventListeners();
     setupAdminListeners();
     setupSidebarToggle();
     setupUserAuthListeners();
+    setupAccessClaimListener();
     updateSavedCount();
     
     // Initial UI state
@@ -1129,4 +1160,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Background data fetch and access check
     await init();
+
+    // Check for success redirect from free claim
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('accessClaimed') === 'true') {
+        showToast("Access Unlocked! Happy Studying! 🎉", "success");
+        // Clean URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
 });
