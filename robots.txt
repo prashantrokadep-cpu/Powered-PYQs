@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://refactored-octo-umbrella-beta.vercel.app/sitemap.xml
