@@ -1114,29 +1114,22 @@ function updateAccessUI() {
 function setupAccessClaimListener() {
     if (!elements.btnClaimFreeAccess) return;
 
-    elements.btnClaimFreeAccess.addEventListener('click', async () => {
+    elements.btnClaimFreeAccess.addEventListener('click', () => {
         if (!state.currentUser) {
             showToast("Please login first to claim access.", "info");
             elements.userAuthModal.classList.add('active');
             return;
         }
 
-        // 1. Open the Ad Page in a new tab
-        // Replace this URL with your ShrinkMe/AdFly/Shortener link
-        const adPageUrl = `https://www.google.com/search?q=Your+Ad+Link+Here`; 
+        // Generate the specific claim URL for this user
+        const claimUrl = `${window.location.origin}/api/access/claim?userId=${state.currentUser.id}`;
+        
+        // Replace this with your ShrinkMe/AdFly link wrapping the claimUrl
+        // Example: `https://shrinkme.io/st?api=YOUR_API_KEY&url=${claimUrl}`
+        const adPageUrl = `https://www.google.com/search?q=Finish+task+to+unlock+access&url=${encodeURIComponent(claimUrl)}`; 
+        
         window.open(adPageUrl, '_blank');
-
-        // 2. Immediately grant access in the background
-        try {
-            const response = await fetch(`${BASE_API_URL}/api/access/claim?userId=${state.currentUser.id}`);
-            if (response.ok) {
-                showToast("Access Unlocked! Check the new tab for your ad.", "success");
-                // Refresh the local state to show content immediately
-                await checkAccessStatus(); 
-            }
-        } catch (err) {
-            console.error("Auto-claim error:", err);
-        }
+        showToast("Complete the task in the new tab to unlock access!", "info");
     });
 }
 

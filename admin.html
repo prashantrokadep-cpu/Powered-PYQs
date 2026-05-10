@@ -10,14 +10,17 @@
     <style>
         body {
             overflow: auto;
+            background-color: var(--bg-main);
         }
 
         .admin-page {
             min-height: 100vh;
-            padding: 2rem;
+            padding: 3rem 2rem;
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .admin-page-header {
@@ -25,12 +28,19 @@
             align-items: center;
             justify-content: space-between;
             gap: 1rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1rem;
+            background: var(--bg-surface-solid);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-soft);
         }
 
         .admin-page-header h1 {
-            font-size: 2rem;
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .admin-back-link {
@@ -39,30 +49,52 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            background: var(--bg-main);
+        }
+
+        .admin-back-link:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+            transform: translateX(-3px);
         }
 
         .admin-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2rem;
         }
 
         .admin-panel {
             background: var(--bg-surface-solid);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
             box-shadow: var(--shadow-soft);
+            transition: var(--transition);
+        }
+
+        .admin-panel:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-4px);
         }
 
         .admin-panel h2 {
-            margin-bottom: 1rem;
-            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+            border-left: 4px solid var(--primary);
+            padding-left: 1rem;
         }
 
         .admin-status {
-            margin-top: 1rem;
-            color: var(--text-muted);
+            margin-top: 1.5rem;
+            color: var(--primary);
+            font-weight: 500;
             min-height: 1.5rem;
         }
 
@@ -70,31 +102,19 @@
             display: none;
         }
 
-        @media (max-width: 760px) {
+        @media (max-width: 768px) {
             .admin-page {
-                padding: 1rem;
+                padding: 1.5rem 1rem;
             }
 
             .admin-page-header {
-                align-items: flex-start;
                 flex-direction: column;
-            }
-
-            .admin-page-header h1 {
-                font-size: 1.45rem;
-            }
-
-            .admin-back-link {
-                min-height: 44px;
+                align-items: flex-start;
+                padding: 1.5rem;
             }
 
             .admin-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .admin-panel {
-                padding: 1rem;
             }
         }
     </style>
@@ -187,6 +207,24 @@
                 <button class="btn-primary" type="submit">Upload Resource</button>
                 <p class="admin-status" id="affiliate-status"></p>
             </form>
+
+            <form class="admin-panel" id="generate-keys-form">
+                <h2>Generate Access Keys</h2>
+                <div class="form-group">
+                    <label>Number of Keys to Generate</label>
+                    <input type="number" id="keys-count" value="1" min="1" max="50" required>
+                </div>
+                <div class="form-group">
+                    <label>Duration (Hours)</label>
+                    <input type="number" id="keys-duration" value="24" min="1" max="720" required>
+                </div>
+                <button class="btn-primary" type="submit">Generate Keys</button>
+                <div id="generated-keys-container" style="margin-top: 1rem; display: none;">
+                    <label>New Keys (Copy These):</label>
+                    <textarea id="generated-keys-list" rows="4" readonly style="width: 100%; font-family: monospace; padding: 0.5rem;"></textarea>
+                </div>
+                <p class="admin-status" id="keys-status"></p>
+            </form>
         </section>
     </main>
 
@@ -268,6 +306,37 @@
                 if (!response.ok) throw new Error(result.error || 'Upload failed.');
                 event.target.reset();
                 status.textContent = 'Resource uploaded successfully.';
+            } catch (error) {
+                status.textContent = error.message;
+            }
+        });
+
+        document.getElementById('generate-keys-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const status = document.getElementById('keys-status');
+            const container = document.getElementById('generated-keys-container');
+            const list = document.getElementById('generated-keys-list');
+            
+            status.textContent = 'Generating...';
+            container.style.display = 'none';
+
+            const payload = {
+                count: parseInt(document.getElementById('keys-count').value),
+                hours: parseInt(document.getElementById('keys-duration').value)
+            };
+
+            try {
+                const response = await fetch('/api/admin/generate-keys', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Failed to generate keys.');
+                
+                status.textContent = `Successfully generated ${result.keys.length} key(s).`;
+                list.value = result.keys.join('\n');
+                container.style.display = 'block';
             } catch (error) {
                 status.textContent = error.message;
             }

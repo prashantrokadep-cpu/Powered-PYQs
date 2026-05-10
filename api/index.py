@@ -35,6 +35,7 @@ STATIC_FILES = {
     "robots.txt",
     "ads.txt",
     "sitemap.xml",
+    "logo.png"
 }
 
 
