@@ -463,6 +463,7 @@ def activate_key():
 @app.route('/api/access/claim', methods=['GET'])
 def claim_access():
     user_id = request.args.get('userId')
+    key = request.args.get('key')
     if not user_id:
         return "Missing userId", 400
     
@@ -471,15 +472,40 @@ def claim_access():
         conn = get_db_connection()
         placeholder = db_placeholder()
         
+        # If a specific key is provided, use the standard activation logic
+        if key:
+            return redirect(f'/?key={key}')
+            
         expiry = (datetime.now() + timedelta(hours=24)).isoformat()
         conn.execute(f'UPDATE users SET access_until = {placeholder} WHERE id = {placeholder}', (expiry, user_id))
         conn.commit()
         
-        # Redirect back to the main site with a success flag
-        from flask import redirect
         return redirect('/?accessClaimed=true')
     except Exception as e:
         return f"Error: {e}", 500
+    finally:
+        if conn:
+            conn.close()
+
+@app.route('/api/access/generate-and-link', methods=['POST'])
+def generate_and_link():
+    data, error = get_json_payload(['userId'])
+    if error:
+        return jsonify({"error": error}), 400
+        
+    conn = None
+    try:
+        conn = get_db_connection()
+        placeholder = db_placeholder()
+        key = str(uuid.uuid4())[:8].upper()
+        
+        # Insert a new 24h key
+        conn.execute(f'INSERT INTO access_keys (key, duration_hours) VALUES ({placeholder}, 24)', (key,))
+        conn.commit()
+        
+        return jsonify({"key": key}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     finally:
         if conn:
             conn.close()

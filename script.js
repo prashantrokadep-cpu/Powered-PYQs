@@ -1114,22 +1114,40 @@ function updateAccessUI() {
 function setupAccessClaimListener() {
     if (!elements.btnClaimFreeAccess) return;
 
-    elements.btnClaimFreeAccess.addEventListener('click', () => {
+    elements.btnClaimFreeAccess.addEventListener('click', async () => {
         if (!state.currentUser) {
             showToast("Please login first to claim access.", "info");
             elements.userAuthModal.classList.add('active');
             return;
         }
 
-        // Generate the specific claim URL for this user
-        const claimUrl = `${window.location.origin}/api/access/claim?userId=${state.currentUser.id}`;
-        
-        // Replace this with your ShrinkMe/AdFly link wrapping the claimUrl
-        // Example: `https://shrinkme.io/st?api=YOUR_API_KEY&url=${claimUrl}`
-        const adPageUrl = `https://www.google.com/search?q=Finish+task+to+unlock+access&url=${encodeURIComponent(claimUrl)}`; 
-        
-        window.open(adPageUrl, '_blank');
-        showToast("Complete the task in the new tab to unlock access!", "info");
+        showToast("Generating access key...", "info");
+
+        try {
+            // 1. Request a new key from the backend
+            const response = await fetch(`${BASE_API_URL}/api/access/generate-and-link`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: state.currentUser.id })
+            });
+            const data = await response.json();
+
+            if (response.ok && data.key) {
+                // 2. Open the Ad Page with the key in the final redirect URL
+                const claimUrl = `${window.location.origin}/api/access/claim?userId=${state.currentUser.id}&key=${data.key}`;
+                
+                // IMPORTANT: Use your shortener link here
+                const adPageUrl = `https://www.google.com/search?q=Watch+ad+to+unlock&url=${encodeURIComponent(claimUrl)}`; 
+                
+                window.open(adPageUrl, '_blank');
+                showToast("Finish the task in the new tab to unlock!", "info");
+            } else {
+                throw new Error(data.error || "Key generation failed");
+            }
+        } catch (err) {
+            console.error("Key system error:", err);
+            showToast("System busy. Please try again.", "error");
+        }
     });
 }
 
@@ -1154,11 +1172,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Background data fetch and access check
     await init();
 
-    // Check for success redirect from free claim
+    // Check for success redirect or automatic key verification
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('accessClaimed') === 'true') {
-        showToast("Access Unlocked! Happy Studying! 🎉", "success");
+    const keyFromUrl = urlParams.get('key');
+    
+    if (keyFromUrl) {
+        showToast("Verifying access key...", "info");
+        // Perform automatic activation
+        handleKeyActivation(keyFromUrl);
         // Clean URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (urlParams.get('accessClaimed') === 'true') {
+        showToast("Access Unlocked! Happy Studying! 🎉", "success");
         window.history.replaceState({}, document.title, window.location.pathname);
     }
 });
