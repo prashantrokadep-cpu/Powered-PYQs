@@ -1121,32 +1121,40 @@ function setupAccessClaimListener() {
             return;
         }
 
-        showToast("Generating access key...", "info");
+        // Check if running on Vercel (production) or local/development
+        const isProduction = window.location.hostname !== 'localhost' && !window.location.hostname.startsWith('127.0.0.1') && !window.location.hostname.startsWith('192.168.');
+        
+        if (isProduction) {
+            // Vercel/Production: Redirect to dedicated access page
+            showToast("Redirecting to access page...", "info");
+            window.location.href = `/get-access.html?userId=${state.currentUser.id}`;
+        } else {
+            // Local/Development: Use old flow with external redirect (for testing)
+            showToast("Generating access key...", "info");
 
-        try {
-            // 1. Request a new key from the backend
-            const response = await fetch(`${BASE_API_URL}/api/access/generate-and-link`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: state.currentUser.id })
-            });
-            const data = await response.json();
+            try {
+                // 1. Request a new key from the backend
+                const response = await fetch(`${BASE_API_URL}/api/access/generate-and-link`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: state.currentUser.id })
+                });
+                const data = await response.json();
 
-            if (response.ok && data.key) {
-                // 2. Open the Ad Page with the key in the final redirect URL
-                const claimUrl = `${window.location.origin}/api/access/claim?userId=${state.currentUser.id}&key=${data.key}`;
-                
-                // IMPORTANT: Use your shortener link here
-                const adPageUrl = `https://www.google.com/search?q=Watch+ad+to+unlock&url=${encodeURIComponent(claimUrl)}`; 
-                
-                window.open(adPageUrl, '_blank');
-                showToast("Finish the task in the new tab to unlock!", "info");
-            } else {
-                throw new Error(data.error || "Key generation failed");
+                if (response.ok && data.key) {
+                    // 2. Open the Ad Page with the key in the final redirect URL
+                    const claimUrl = `${window.location.origin}/api/access/claim?userId=${state.currentUser.id}&key=${data.key}`;
+                    
+                    // Local development: open in new tab
+                    window.open(claimUrl, '_blank');
+                    showToast("Check the new tab to complete access activation!", "info");
+                } else {
+                    throw new Error(data.error || "Key generation failed");
+                }
+            } catch (err) {
+                console.error("Key system error:", err);
+                showToast("System busy. Please try again.", "error");
             }
-        } catch (err) {
-            console.error("Key system error:", err);
-            showToast("System busy. Please try again.", "error");
         }
     });
 }
@@ -1184,6 +1192,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.history.replaceState({}, document.title, window.location.pathname);
     } else if (urlParams.get('accessClaimed') === 'true') {
         showToast("Access Unlocked! Happy Studying! 🎉", "success");
+        window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (urlParams.get('accessUnlocked') === 'true') {
+        showToast("🎉 Access Unlocked for 24 Hours! Happy Studying!", "success");
+        await checkAccessStatus();
         window.history.replaceState({}, document.title, window.location.pathname);
     }
 });

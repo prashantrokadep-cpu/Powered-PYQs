@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unlock Access - Powered PYQs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #1f2937;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .content {
+            margin: 30px 0;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .info-box p {
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .benefits {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .benefit-item {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .benefit-item i {
+            font-size: 24px;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .benefit-item p {
+            color: #4b5563;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f9fafb;
+        }
+
+        .loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .spinner {
+            border: 3px solid rgba(102, 126, 234, 0.1);
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+            border-left: 4px solid #dc2626;
+        }
+
+        .success-message {
+            background: #dcfce7;
+            color: #166534;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+            border-left: 4px solid #16a34a;
+        }
+
+        .timer {
+            font-size: 32px;
+            color: #667eea;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .instruction {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .instruction p {
+            color: #1e40af;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .benefits {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎓</div>
+            <h1>Unlock Full Access</h1>
+            <p class="subtitle">Get unlimited access to all PYQ solutions</p>
+        </div>
+
+        <div id="error-message" class="error-message"></div>
+        <div id="success-message" class="success-message"></div>
+
+        <div class="content">
+            <div class="info-box">
+                <h3><i class="ri-check-line"></i> What You Get</h3>
+                <p>Access all previous year questions with detailed solutions for 24 hours. Bookmark questions, sync across devices, and prepare effectively for your board exams.</p>
+            </div>
+
+            <div class="benefits">
+                <div class="benefit-item">
+                    <i class="ri-book-open-line"></i>
+                    <p>Full Access</p>
+                </div>
+                <div class="benefit-item">
+                    <i class="ri-shield-check-line"></i>
+                    <p>24 Hours</p>
+                </div>
+                <div class="benefit-item">
+                    <i class="ri-bookmark-line"></i>
+                    <p>Save Questions</p>
+                </div>
+                <div class="benefit-item">
+                    <i class="ri-cloud-sync-line"></i>
+                    <p>Cloud Sync</p>
+                </div>
+            </div>
+
+            <div id="timer-section" style="display: none;">
+                <p style="color: #6b7280; margin-bottom: 10px;">Complete the task:</p>
+                <div class="timer" id="timer">05:00</div>
+                <div class="instruction">
+                    <p>✓ Click "Complete Task" when done<br>✓ You'll be redirected back automatically<br>✓ Your access will activate immediately</p>
+                </div>
+            </div>
+
+            <div id="init-section">
+                <div class="button-group">
+                    <button class="btn-primary" id="btn-start-task">
+                        <i class="ri-play-circle-line"></i> Complete Task for Free Access
+                    </button>
+                    <button class="btn-secondary" id="btn-go-back">
+                        <i class="ri-arrow-left-line"></i> Back to Home
+                    </button>
+                </div>
+            </div>
+
+            <div id="task-section" style="display: none;">
+                <div class="button-group">
+                    <button class="btn-primary" id="btn-complete-task">
+                        <span id="btn-text">✓ I Completed the Task</span>
+                        <div class="loading" id="loading">
+                            <div class="spinner"></div>
+                            <span>Processing...</span>
+                        </div>
+                    </button>
+                    <button class="btn-secondary" id="btn-cancel-task">
+                        <i class="ri-close-line"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <p class="footer-text">This access token is single-use and expires in 24 hours after activation.</p>
+    </div>
+
+    <script>
+        // API Configuration (same as main app)
+        let BASE_API_URL = '';
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            BASE_API_URL = 'http://' + window.location.hostname + ':5000';
+        } else if (window.location.hostname.startsWith('192.168.')) {
+            BASE_API_URL = 'http://' + window.location.hostname + ':5000';
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('userId');
+        const key = urlParams.get('key');
+
+        const elements = {
+            errorMsg: document.getElementById('error-message'),
+            successMsg: document.getElementById('success-message'),
+            initSection: document.getElementById('init-section'),
+            taskSection: document.getElementById('task-section'),
+            timerSection: document.getElementById('timer-section'),
+            btnStartTask: document.getElementById('btn-start-task'),
+            btnCompleteTask: document.getElementById('btn-complete-task'),
+            btnCancelTask: document.getElementById('btn-cancel-task'),
+            btnGoBack: document.getElementById('btn-go-back'),
+            btnText: document.getElementById('btn-text'),
+            loading: document.getElementById('loading'),
+            timer: document.getElementById('timer')
+        };
+
+        let timeRemaining = 300; // 5 minutes in seconds
+        let isProcessing = false;
+
+        // Timer function
+        function startTimer() {
+            const timerInterval = setInterval(() => {
+                timeRemaining--;
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                elements.timer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    showError('Task time expired. Please try again.');
+                    resetUI();
+                }
+            }, 1000);
+        }
+
+        function showError(message) {
+            elements.errorMsg.textContent = message;
+            elements.errorMsg.style.display = 'block';
+            setTimeout(() => {
+                elements.errorMsg.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            elements.successMsg.textContent = message;
+            elements.successMsg.style.display = 'block';
+        }
+
+        function resetUI() {
+            elements.initSection.style.display = 'block';
+            elements.taskSection.style.display = 'none';
+            elements.timerSection.style.display = 'none';
+            elements.btnText.style.display = 'inline';
+            elements.loading.style.display = 'none';
+            isProcessing = false;
+            timeRemaining = 300;
+        }
+
+        // Start Task
+        elements.btnStartTask.addEventListener('click', async () => {
+            if (!userId) {
+                showError('User ID not found. Please log in first.');
+                return;
+            }
+
+            // Check if user is authenticated by validating userId
+            try {
+                elements.btnStartTask.disabled = true;
+                elements.btnStartTask.style.opacity = '0.6';
+
+                // Request a new key from backend
+                const response = await fetch(`${BASE_API_URL}/api/access/generate-and-link`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: userId })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.key) {
+                    // Store the key temporarily
+                    sessionStorage.setItem('accessKey', data.key);
+                    
+                    // Show task section
+                    elements.initSection.style.display = 'none';
+                    elements.taskSection.style.display = 'block';
+                    elements.timerSection.style.display = 'block';
+                    
+                    // Start timer
+                    startTimer();
+                } else {
+                    showError(data.error || 'Failed to generate access key');
+                    elements.btnStartTask.disabled = false;
+                    elements.btnStartTask.style.opacity = '1';
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                showError('Connection error. Please check your internet connection.');
+                elements.btnStartTask.disabled = false;
+                elements.btnStartTask.style.opacity = '1';
+            }
+        });
+
+        // Complete Task
+        elements.btnCompleteTask.addEventListener('click', async () => {
+            if (isProcessing) return;
+            isProcessing = true;
+
+            const accessKey = sessionStorage.getItem('accessKey');
+
+            if (!accessKey || !userId) {
+                showError('Invalid session. Please try again.');
+                resetUI();
+                return;
+            }
+
+            try {
+                elements.btnText.style.display = 'none';
+                elements.loading.style.display = 'flex';
+
+                // Activate the key
+                const response = await fetch(`${BASE_API_URL}/api/access/activate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: userId, key: accessKey })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showSuccess('✓ Access Unlocked! Redirecting to home...');
+                    sessionStorage.removeItem('accessKey');
+                    
+                    // Redirect back to home after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/?accessUnlocked=true';
+                    }, 2000);
+                } else {
+                    showError(data.error || 'Failed to activate access');
+                    elements.btnText.style.display = 'inline';
+                    elements.loading.style.display = 'none';
+                    isProcessing = false;
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                showError('Connection error. Please try again.');
+                elements.btnText.style.display = 'inline';
+                elements.loading.style.display = 'none';
+                isProcessing = false;
+            }
+        });
+
+        // Cancel Task
+        elements.btnCancelTask.addEventListener('click', () => {
+            sessionStorage.removeItem('accessKey');
+            resetUI();
+        });
+
+        // Go Back
+        elements.btnGoBack.addEventListener('click', () => {
+            window.location.href = '/';
+        });
+
+        // Check if already have access via URL params
+        if (key && userId) {
+            showSuccess('Activating your access...');
+            elements.initSection.style.display = 'none';
+
+            // Automatically activate if key is provided via URL
+            (async () => {
+                try {
+                    const response = await fetch(`${BASE_API_URL}/api/access/activate`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: userId, key: key })
+                    });
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        showSuccess('✓ Access Activated! Redirecting...');
+                        setTimeout(() => {
+                            window.location.href = '/?accessUnlocked=true';
+                        }, 2000);
+                    } else {
+                        showError(data.error || 'Failed to activate');
+                        resetUI();
+                    }
+                } catch (err) {
+                    showError('Connection error');
+                    resetUI();
+                }
+            })();
+        }
+    </script>
+</body>
+</html>
