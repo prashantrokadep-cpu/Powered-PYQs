@@ -19,9 +19,7 @@ let state = {
     isAdminMode: false,
     currentUser: JSON.parse(localStorage.getItem('pyq_user')) || null,
     affiliateData: [],
-    authMode: 'login', // 'login' or 'signup'
-    hasAccess: false,
-    accessUntil: null
+    authMode: 'login' // 'login' or 'signup'
 };
 let eventListenersReady = false;
 let adminListenersReady = false;
@@ -75,18 +73,7 @@ const elements = {
     authUsername: document.getElementById('auth-username'),
     toastContainer: document.getElementById('toast-container'),
     btnToggleFooter: document.getElementById('btn-toggle-footer'),
-    footerExpandContainer: document.getElementById('footer-expand-container'),
-
-    // Access System Elements
-    accessDeniedOverlay: document.getElementById('access-denied-overlay'),
-    accessKeyModal: document.getElementById('access-key-modal'),
-    closeAccessModalBtn: document.getElementById('close-access-modal'),
-    btnShowKeyModal: document.getElementById('btn-show-key-modal'),
-    accessKeyForm: document.getElementById('access-key-form'),
-    accessKeyError: document.getElementById('access-key-error'),
-    accessStatusTab: document.getElementById('access-status-tab'),
-    accessExpiryText: document.getElementById('access-expiry-text'),
-    btnClaimFreeAccess: document.getElementById('btn-claim-free-access')
+    footerExpandContainer: document.getElementById('footer-expand-container')
 };
 
 // Application Data (Merge static data with backend data)
@@ -143,19 +130,6 @@ function safeImageSrc(value) {
 async function init() {
     renderSkeletons();
     
-    if (!state.currentUser) {
-        // Force login if not logged in
-        elements.userAuthModal.classList.add('active');
-        // Hide close button on login modal when forced
-        elements.closeAuthModalBtn.style.display = 'none';
-        updateAccessUI(); // Ensure content is locked
-        return;
-    }
-
-    if (state.currentUser) {
-        elements.closeAuthModalBtn.style.display = 'flex'; // Restore if logged in
-        await checkAccessStatus();
-    }
     try {
         // Fetch questions from our backend
         const response = await fetch(`${BASE_API_URL}/api/questions`);
@@ -388,27 +362,6 @@ function setupSidebarToggle() {
             const isVisible = elements.footerExpandContainer.classList.contains('footer-visible');
             elements.btnToggleFooter.querySelector('span').textContent = isVisible ? 'Hide Site Info' : 'Show Site Info';
             elements.btnToggleFooter.querySelector('i').className = isVisible ? 'ri-arrow-up-s-line' : 'ri-information-line';
-        });
-    }
-
-    // Access Key Listeners
-    if (elements.btnShowKeyModal) {
-        elements.btnShowKeyModal.addEventListener('click', () => {
-            elements.accessKeyModal.classList.add('active');
-        });
-    }
-
-    if (elements.closeAccessModalBtn) {
-        elements.closeAccessModalBtn.addEventListener('click', () => {
-            elements.accessKeyModal.classList.remove('active');
-        });
-    }
-
-    if (elements.accessKeyForm) {
-        elements.accessKeyForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const key = document.getElementById('access-key-input').value.trim();
-            handleKeyActivation(key);
         });
     }
 
@@ -964,7 +917,6 @@ async function handleLogin(username, password) {
             localStorage.setItem('pyq_user', JSON.stringify(data.user));
             elements.userAuthModal.classList.remove('active');
             updateUserUI();
-            await checkAccessStatus(); // Check access after login
             await fetchUserSavedQuestions();
             clearAuthForm();
         } else {
@@ -1044,128 +996,12 @@ function clearAuthForm() {
     elements.authSuccess.style.display = 'none';
 }
 
-// Access System Functions
-async function checkAccessStatus() {
-    if (!state.currentUser) {
-        state.hasAccess = false;
-        updateAccessUI();
-        return;
-    }
-
-    try {
-        const response = await fetch(`${BASE_API_URL}/api/access/status?userId=${state.currentUser.id}`);
-        const data = await response.json();
-        state.hasAccess = data.hasAccess;
-        state.accessUntil = data.accessUntil;
-        updateAccessUI();
-    } catch (err) {
-        console.error("Failed to check access status");
-    }
-}
-
-async function handleKeyActivation(key) {
-    if (!state.currentUser) {
-        showToast("Please login first to activate a key.", "info");
-        elements.accessKeyModal.classList.remove('active');
-        elements.userAuthModal.classList.add('active');
-        return;
-    }
-
-    try {
-        const response = await fetch(`${BASE_API_URL}/api/access/activate`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: state.currentUser.id, key: key })
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-            state.hasAccess = true;
-            state.accessUntil = data.accessUntil;
-            showToast("Access unlocked for 24 hours!", "success");
-            elements.accessKeyModal.classList.remove('active');
-            updateAccessUI();
-        } else {
-            elements.accessKeyError.textContent = data.error || "Invalid Key";
-        }
-    } catch (err) {
-        elements.accessKeyError.textContent = "Connection error";
-    }
-}
-
-function updateAccessUI() {
-    // If not logged in, content is always locked
-    const isLocked = !state.hasAccess || !state.currentUser;
-    elements.accessDeniedOverlay.style.display = isLocked ? 'flex' : 'none';
-    
-    // Disable interactions with container if locked
-    elements.questionsContainer.style.filter = isLocked ? 'blur(8px)' : 'none';
-    elements.questionsContainer.style.pointerEvents = isLocked ? 'none' : 'auto';
-
-    if (state.hasAccess && state.accessUntil) {
-        const expiry = new Date(state.accessUntil);
-        elements.accessExpiryText.textContent = `Access until: ${expiry.toLocaleDateString()} ${expiry.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
-        elements.accessStatusTab.style.display = 'flex';
-    } else {
-        elements.accessStatusTab.style.display = 'none';
-    }
-}
-
-function setupAccessClaimListener() {
-    if (!elements.btnClaimFreeAccess) return;
-
-    elements.btnClaimFreeAccess.addEventListener('click', async () => {
-        if (!state.currentUser) {
-            showToast("Please login first to claim access.", "info");
-            elements.userAuthModal.classList.add('active');
-            return;
-        }
-
-        // Check if running on Vercel (production) or local/development
-        const isProduction = window.location.hostname !== 'localhost' && !window.location.hostname.startsWith('127.0.0.1') && !window.location.hostname.startsWith('192.168.');
-        
-        if (isProduction) {
-            // Vercel/Production: Redirect to dedicated access page
-            showToast("Redirecting to access page...", "info");
-            window.location.href = `/get-access.html?userId=${state.currentUser.id}`;
-        } else {
-            // Local/Development: Use old flow with external redirect (for testing)
-            showToast("Generating access key...", "info");
-
-            try {
-                // 1. Request a new key from the backend
-                const response = await fetch(`${BASE_API_URL}/api/access/generate-and-link`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: state.currentUser.id })
-                });
-                const data = await response.json();
-
-                if (response.ok && data.key) {
-                    // 2. Open the Ad Page with the key in the final redirect URL
-                    const claimUrl = `${window.location.origin}/api/access/claim?userId=${state.currentUser.id}&key=${data.key}`;
-                    
-                    // Local development: open in new tab
-                    window.open(claimUrl, '_blank');
-                    showToast("Check the new tab to complete access activation!", "info");
-                } else {
-                    throw new Error(data.error || "Key generation failed");
-                }
-            } catch (err) {
-                console.error("Key system error:", err);
-                showToast("System busy. Please try again.", "error");
-            }
-        }
-    });
-}
-
 // Start
 document.addEventListener('DOMContentLoaded', async () => {
     setupEventListeners();
     setupAdminListeners();
     setupSidebarToggle();
     setupUserAuthListeners();
-    setupAccessClaimListener();
     updateSavedCount();
     
     // Initial UI state
@@ -1181,21 +1017,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     await init();
 
     // Check for success redirect or automatic key verification
-    const urlParams = new URLSearchParams(window.location.search);
-    const keyFromUrl = urlParams.get('key');
-    
-    if (keyFromUrl) {
-        showToast("Verifying access key...", "info");
-        // Perform automatic activation
-        handleKeyActivation(keyFromUrl);
-        // Clean URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (urlParams.get('accessClaimed') === 'true') {
-        showToast("Access Unlocked! Happy Studying! 🎉", "success");
-        window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (urlParams.get('accessUnlocked') === 'true') {
-        showToast("🎉 Access Unlocked for 24 Hours! Happy Studying!", "success");
-        await checkAccessStatus();
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
 });

@@ -82,12 +82,6 @@
                 <span id="user-tab-text">User Login</span>
             </div>
 
-            <div class="saved-tab" id="access-status-tab"
-                style="margin-top: 0.5rem; display: none; background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); font-size: 0.75rem;">
-                <i class="ri-key-2-line"></i>
-                <span id="access-expiry-text">No Active Key</span>
-            </div>
-
             <div class="saved-tab" id="affiliates-tab"
                 style="margin-top: 0.5rem; background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2);">
                 <i class="ri-shopping-cart-2-line"></i>
@@ -160,24 +154,6 @@
                     <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-0000000000000000"
                         data-ad-slot="0000000000" data-ad-format="auto" data-full-width-responsive="true"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                </div>
-            </div>
-
-            <!-- Access Denied Overlay -->
-            <div id="access-denied-overlay" class="access-overlay" style="display: none;">
-                <div class="access-card">
-                    <div class="access-lock-icon"><i class="ri-lock-2-line"></i></div>
-                    <h2>Content Locked</h2>
-                    <p>To view these questions, please enter your 24-hour access key or claim free access.</p>
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%;">
-                        <button class="btn-primary" id="btn-show-key-modal" style="width: 100%;">Enter Access
-                            Key</button>
-                        <button class="btn-primary" id="btn-claim-free-access"
-                            style="width: 100%; background: var(--success); border-color: var(--success);">
-                            <i class="ri-key-2-line"></i> Get 24hr Access
-                        </button>
-                    </div>
-                    <p class="access-help">Watching an ad helps us keep the site free!</p>
                 </div>
             </div>
 
@@ -427,28 +403,6 @@
                 <p id="auth-error" class="error-text"></p>
                 <p id="auth-success" class="success-text"
                     style="color: var(--success); font-size: 0.85rem; margin-top: 0.5rem; display: none;"></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Access Key Modal -->
-    <div class="modal-overlay" id="access-key-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Activate Access</h2>
-                <button class="btn-close" id="close-access-modal"><i class="ri-close-line"></i></button>
-            </div>
-            <div class="modal-body">
-                <p style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-muted);">Enter your unique access
-                    key to unlock all questions and solutions for 24 hours.</p>
-                <form id="access-key-form">
-                    <div class="form-group">
-                        <label>Access Key</label>
-                        <input type="text" id="access-key-input" placeholder="XXXX-XXXX" required>
-                    </div>
-                    <button type="submit" class="btn-primary" style="width: 100%;">Unlock Now</button>
-                </form>
-                <p id="access-key-error" class="error-text" style="margin-top: 0.5rem;"></p>
             </div>
         </div>
     </div>

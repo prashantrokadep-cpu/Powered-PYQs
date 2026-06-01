@@ -1,11 +1,11 @@
-from flask import Flask, request, jsonify, redirect
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
 import os
 import tempfile
 import hashlib
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -119,18 +119,9 @@ def init_db():
             CREATE TABLE IF NOT EXISTS users (
                 id TEXT PRIMARY KEY,
                 username TEXT UNIQUE NOT NULL,
-                password_hash TEXT NOT NULL,
-                access_until TIMESTAMP
+                password_hash TEXT NOT NULL
             )
         ''')
-        
-        # Migration: Add access_until to users if it doesn't exist
-        try:
-            conn.execute('ALTER TABLE users ADD COLUMN access_until TIMESTAMP')
-            conn.commit()
-        except Exception:
-            pass # Column likely already exists
-            
         conn.execute('''
             CREATE TABLE IF NOT EXISTS user_saved_questions (
                 user_id TEXT NOT NULL,
@@ -138,15 +129,6 @@ def init_db():
                 PRIMARY KEY (user_id, question_id),
                 FOREIGN KEY (user_id) REFERENCES users(id),
                 FOREIGN KEY (question_id) REFERENCES questions(id)
-            )
-        ''')
-        conn.execute('''
-            CREATE TABLE IF NOT EXISTS access_keys (
-                key TEXT PRIMARY KEY,
-                is_used INTEGER DEFAULT 0,
-                used_by TEXT,
-                used_at TIMESTAMP,
-                duration_hours INTEGER DEFAULT 24
             )
         ''')
         conn.commit()
@@ -285,18 +267,14 @@ def register():
         user_id = str(uuid.uuid4())
         password_hash = hash_password(data['password'])
         
-        # Auto-grant first 24 hours
-        access_until = (datetime.now() + timedelta(hours=24)).isoformat()
-        
         conn.execute(f'''
-            INSERT INTO users (id, username, password_hash, access_until)
-            VALUES ({placeholder}, {placeholder}, {placeholder}, {placeholder})
-        ''', (user_id, data['username'], password_hash, access_until))
+            INSERT INTO users (id, username, password_hash)
+            VALUES ({placeholder}, {placeholder}, {placeholder})
+        ''', (user_id, data['username'], password_hash))
         conn.commit()
         return jsonify({
             "message": "User registered successfully!", 
-            "userId": user_id,
-            "accessUntil": access_until
+            "userId": user_id
         }), 201
     except Exception as e:
         if is_unique_constraint_error(e):
@@ -321,25 +299,11 @@ def login():
         ''', (data['username'],)).fetchone()
         
         if user and user['password_hash'] == hash_password(data['password']):
-            # Auto-renew/Grant access for 24 hours if expired
-            access_until = user['access_until']
-            is_expired = True
-            if access_until:
-                expiry = datetime.fromisoformat(access_until) if isinstance(access_until, str) else access_until
-                if expiry > datetime.now():
-                    is_expired = False
-            
-            if is_expired:
-                access_until = (datetime.now() + timedelta(hours=24)).isoformat()
-                conn.execute(f'UPDATE users SET access_until = {placeholder} WHERE id = {placeholder}', (access_until, user['id']))
-                conn.commit()
-
             return jsonify({
                 "message": "Login successful!",
                 "user": {
                     "id": user['id'],
-                    "username": user['username'],
-                    "accessUntil": access_until
+                    "username": user['username']
                 }
             }), 200
         else:
@@ -394,145 +358,6 @@ def sync_user_saved_questions():
             
         conn.commit()
         return jsonify({"message": "Saved questions synced successfully!"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
-        if conn:
-            conn.close()
-
-# --- Access Key System Endpoints ---
-
-@app.route('/api/access/status', methods=['GET'])
-def get_access_status():
-    user_id = request.args.get('userId')
-    if not user_id:
-        return jsonify({"hasAccess": False}), 200
-    
-    conn = None
-    try:
-        conn = get_db_connection()
-        placeholder = db_placeholder()
-        user = conn.execute(f'SELECT access_until FROM users WHERE id = {placeholder}', (user_id,)).fetchone()
-        
-        if user and user['access_until']:
-            expiry = datetime.fromisoformat(user['access_until']) if isinstance(user['access_until'], str) else user['access_until']
-            if expiry > datetime.now():
-                return jsonify({"hasAccess": True, "accessUntil": user['access_until']}), 200
-                
-        return jsonify({"hasAccess": False}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
-        if conn:
-            conn.close()
-
-@app.route('/api/access/activate', methods=['POST'])
-def activate_key():
-    data, error = get_json_payload(['userId', 'key'])
-    if error:
-        return jsonify({"error": error}), 400
-
-    conn = None
-    try:
-        conn = get_db_connection()
-        placeholder = db_placeholder()
-        
-        # Find the key
-        key_data = conn.execute(f'SELECT * FROM access_keys WHERE key = {placeholder} AND is_used = 0', (data['key'],)).fetchone()
-        
-        if not key_data:
-            return jsonify({"error": "Invalid or already used key"}), 400
-            
-        # Update key as used
-        now = datetime.now().isoformat()
-        expiry = (datetime.now() + timedelta(hours=key_data['duration_hours'])).isoformat()
-        
-        conn.execute(f'''
-            UPDATE access_keys 
-            SET is_used = 1, used_by = {placeholder}, used_at = {placeholder}
-            WHERE key = {placeholder}
-        ''', (data['userId'], now, data['key']))
-        
-        # Update user access
-        conn.execute(f'UPDATE users SET access_until = {placeholder} WHERE id = {placeholder}', (expiry, data['userId']))
-        
-        conn.commit()
-        return jsonify({"message": "Access activated successfully!", "accessUntil": expiry}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
-        if conn:
-            conn.close()
-
-@app.route('/api/access/claim', methods=['GET'])
-def claim_access():
-    user_id = request.args.get('userId')
-    key = request.args.get('key')
-    if not user_id:
-        return "Missing userId", 400
-    
-    conn = None
-    try:
-        conn = get_db_connection()
-        placeholder = db_placeholder()
-        
-        # If a specific key is provided, use the standard activation logic
-        if key:
-            return redirect(f'/?key={key}')
-            
-        expiry = (datetime.now() + timedelta(hours=24)).isoformat()
-        conn.execute(f'UPDATE users SET access_until = {placeholder} WHERE id = {placeholder}', (expiry, user_id))
-        conn.commit()
-        
-        return redirect('/?accessClaimed=true')
-    except Exception as e:
-        return f"Error: {e}", 500
-    finally:
-        if conn:
-            conn.close()
-
-@app.route('/api/access/generate-and-link', methods=['POST'])
-def generate_and_link():
-    data, error = get_json_payload(['userId'])
-    if error:
-        return jsonify({"error": error}), 400
-        
-    conn = None
-    try:
-        conn = get_db_connection()
-        placeholder = db_placeholder()
-        key = str(uuid.uuid4())[:8].upper()
-        
-        # Insert a new 24h key
-        conn.execute(f'INSERT INTO access_keys (key, duration_hours) VALUES ({placeholder}, 24)', (key,))
-        conn.commit()
-        
-        return jsonify({"key": key}), 201
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
-        if conn:
-            conn.close()
-
-# Admin endpoint to generate keys (for your use)
-@app.route('/api/admin/generate-keys', methods=['POST'])
-def generate_keys():
-    # In a real app, protect this with admin password
-    data = request.json
-    count = data.get('count', 1)
-    hours = data.get('hours', 24)
-    
-    conn = None
-    new_keys = []
-    try:
-        conn = get_db_connection()
-        placeholder = db_placeholder()
-        for _ in range(count):
-            key = str(uuid.uuid4())[:8].upper()
-            conn.execute(f'INSERT INTO access_keys (key, duration_hours) VALUES ({placeholder}, {placeholder})', (key, hours))
-            new_keys.append(key)
-        conn.commit()
-        return jsonify({"keys": new_keys}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:

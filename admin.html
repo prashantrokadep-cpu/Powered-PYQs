@@ -208,23 +208,6 @@
                 <p class="admin-status" id="affiliate-status"></p>
             </form>
 
-            <form class="admin-panel" id="generate-keys-form">
-                <h2>Generate Access Keys</h2>
-                <div class="form-group">
-                    <label>Number of Keys to Generate</label>
-                    <input type="number" id="keys-count" value="1" min="1" max="50" required>
-                </div>
-                <div class="form-group">
-                    <label>Duration (Hours)</label>
-                    <input type="number" id="keys-duration" value="24" min="1" max="720" required>
-                </div>
-                <button class="btn-primary" type="submit">Generate Keys</button>
-                <div id="generated-keys-container" style="margin-top: 1rem; display: none;">
-                    <label>New Keys (Copy These):</label>
-                    <textarea id="generated-keys-list" rows="4" readonly style="width: 100%; font-family: monospace; padding: 0.5rem;"></textarea>
-                </div>
-                <p class="admin-status" id="keys-status"></p>
-            </form>
         </section>
     </main>
 
@@ -306,37 +289,6 @@
                 if (!response.ok) throw new Error(result.error || 'Upload failed.');
                 event.target.reset();
                 status.textContent = 'Resource uploaded successfully.';
-            } catch (error) {
-                status.textContent = error.message;
-            }
-        });
-
-        document.getElementById('generate-keys-form').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const status = document.getElementById('keys-status');
-            const container = document.getElementById('generated-keys-container');
-            const list = document.getElementById('generated-keys-list');
-            
-            status.textContent = 'Generating...';
-            container.style.display = 'none';
-
-            const payload = {
-                count: parseInt(document.getElementById('keys-count').value),
-                hours: parseInt(document.getElementById('keys-duration').value)
-            };
-
-            try {
-                const response = await fetch('/api/admin/generate-keys', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'Failed to generate keys.');
-                
-                status.textContent = `Successfully generated ${result.keys.length} key(s).`;
-                list.value = result.keys.join('\n');
-                container.style.display = 'block';
             } catch (error) {
                 status.textContent = error.message;
             }

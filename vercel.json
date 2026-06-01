@@ -11,8 +11,12 @@
       "handle": "filesystem"
     },
     {
-      "src": "/api(?:/(.*))?",
+      "src": "/api/(.*)",
       "dest": "/api/index.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
