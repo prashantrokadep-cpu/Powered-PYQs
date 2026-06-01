@@ -1013,8 +1013,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderChapters();
     renderQuestions();
     
-    // Background data fetch and access check
+    // Background data fetch
     await init();
-
-    // Check for success redirect or automatic key verification
 });

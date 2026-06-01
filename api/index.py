@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import sqlite3
 import os
@@ -7,7 +7,8 @@ import hashlib
 import uuid
 from datetime import datetime
 
-app = Flask(__name__)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+app = Flask(__name__, static_folder=BASE_DIR, static_url_path='')
 CORS(app)
 
 DATABASE_URL = (
@@ -89,6 +90,14 @@ def get_json_payload(required_fields):
         return None, f"Missing required fields: {', '.join(missing_fields)}"
 
     return data, None
+
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_static(path):
+    if path and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    return send_from_directory(app.static_folder, 'index.html')
 
 
 def init_db():
