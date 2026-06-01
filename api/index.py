@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, abort
+from flask import Flask, request, jsonify, redirect
 from flask_cors import CORS
 import sqlite3
 import os
@@ -10,33 +10,48 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 CORS(app)
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 DATABASE_URL = (
     os.getenv("DATABASE_URL")
     or os.getenv("POSTGRES_URL")
     or os.getenv("POSTGRES_PRISMA_URL")
 )
 USING_POSTGRES = bool(DATABASE_URL)
-DB_FILE = (
-    os.path.join(tempfile.gettempdir(), "pyq_database.db")
-    if os.getenv("VERCEL")
-    else os.path.join(os.path.dirname(os.path.dirname(__file__)), "pyq_database.db")
-)
-STATIC_FILES = {
-    "index.html",
-    "admin.html",
-    "about.html",
-    "contact.html",
-    "privacy-policy.html",
-    "terms.html",
-    "style.css",
-    "script.js",
-    "data.js",
-    "robots.txt",
-    "ads.txt",
-    "sitemap.xml",
-    "logo.png"
-}
+DB_FILE = os.path.join(tempfile.gettempdir(), "pyq_database.db")
+
+
+def get_db_connection():
+    if USING_POSTGRES:
+        import psycopg
+        from psycopg.rows import dict_row
+
+        return psycopg.connect(DATABASE_URL, row_factory=dict_row)
+
+    if os.getenv("VERCEL"):
+        raise RuntimeError(
+            "Vercel requires a persistent DATABASE_URL. Set DATABASE_URL to your Postgres string."
+        )
+
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def is_unique_constraint_error(error):
+    message = str(error).lower()
+    return any(keyword in message for keyword in ["unique", "duplicate", "already exists"])
+
+
+def db_placeholder():
+    return "%s" if USING_POSTGRES else "?"
+
+
+def fetch_all(query, params=()):
+    conn = get_db_connection()
+    try:
+        rows = conn.execute(query, params).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
 
 
 def get_db_connection():
@@ -164,17 +179,6 @@ def handle_exception(e):
     return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
 
 
-@app.route('/')
-def serve_index():
-    return send_from_directory(PROJECT_ROOT, 'index.html')
-
-
-@app.route('/<path:filename>')
-def serve_static_file(filename):
-    if filename in STATIC_FILES:
-        return send_from_directory(PROJECT_ROOT, filename)
-
-    abort(404)
 
 
 @app.route('/api/questions', methods=['GET'])
@@ -294,9 +298,9 @@ def register():
             "userId": user_id,
             "accessUntil": access_until
         }), 201
-    except sqlite3.IntegrityError:
-        return jsonify({"error": "Username already exists"}), 409
     except Exception as e:
+        if is_unique_constraint_error(e):
+            return jsonify({"error": "Username already exists"}), 409
         return jsonify({"error": str(e)}), 500
     finally:
         if conn:
